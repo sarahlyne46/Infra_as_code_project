@@ -1,7 +1,7 @@
 Description: >
     Sarah Lyne / Udacity Project 2 / AWS Cloud DevOps Course
     
-    This template deploys security groups, load balancers, listeners, autoscaling, Ubuntu servers for code, iam users,          
+    This template deploys security groups, load balancers, listeners, autoscaling, Ubuntu servers for code, iam users.          
 
 
 
@@ -12,6 +12,45 @@ Parameters:
         Type: String
 
 Resources:
+
+    IamS3BucketRole:
+        Type: AWS::IAM::Role
+        Properties:
+            AssumeRolePolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                - 'ec2.amazonaws.com'
+              Action:
+              - 'sts:AssumeRole'
+            Path: "/"
+            RoleName: 
+            Tags:
+            - Key: Name
+              Value: !Sub ${EnvironmentName} S3Bucket Role
+                
+    IAMRolesForInstanceProfile:
+        Type: AWS::IAM::InstanceProfile
+        Properties:
+            Path: "/"
+            Roles:
+            - Ref: IamS3BucketRole
+
+    IAMRolesForInstancePolicy:
+        Type: AWS::IAM::Policy
+        Properties:
+            PolicyName: IAMRolesForInstancePolicy
+            PolicyDocument:
+                Statement:
+                - Effect: Allow
+                  Action:
+                  - s3:Get*
+                  Resource: "*"
+            Roles:
+            - Ref: IamS3BucketRole
+
     LBSecGroup:
         Type: AWS::EC2::SecurityGroup
         Properties:
@@ -58,11 +97,13 @@ Resources:
             UserData:
                 Fn::Base64: !Sub |
                     #!/bin/bash
-                    sudo apt-get update -y
-                    sudo apt-get install apache2 -y
-                    sudo systemctl start apache2.service          
-            ImageId: ami-00ddb0e5626798373
-            KeyName: VocareumKey2
+                    apt-get update -y
+                    apt-get install apache2 -y
+                    systemctl start apache2.service
+                    cd /var/www/html
+                    echo "Udagram Web Server is Up and Running!" > index.html      
+            ImageId: ami-00ddb0e5626798373  #Ubuntu AMI ID in us-west-2 region
+            IamInstanceProfile: 
             SecurityGroups:
             - Ref: WebServerSecGroup
             InstanceType: t3.small
@@ -79,8 +120,8 @@ Resources:
                 !Sub "${EnvironmentName}-PRIV-NETS"
             LaunchConfigurationName:
                 Ref: WebAppLaunchConfig
-            MinSize: '3'
-            MaxSize: '5'
+            MinSize: '2'
+            MaxSize: '6'
             TargetGroupARNs:
             - Ref: WebAppTargetGroup
 
@@ -98,10 +139,8 @@ Resources:
         Properties:
             DefaultActions:
             - Type: forward
-              TargetGroupArn:
-                Ref: WebAppTargetGroup
-            LoadBalancerArn:
-              Ref: WebAppLB
+              TargetGroupArn: !Ref WebAppTargetGroup
+            LoadBalancerArn: !Ref WebAppLB
             Port: '80'
             Protocol: HTTP
 
@@ -120,10 +159,10 @@ Resources:
     WebAppTargetGroup:
         Type: AWS::ElasticLoadBalancingV2::TargetGroup
         Properties:
-          HealthCheckIntervalSeconds: 10
+          HealthCheckIntervalSeconds: 20
           HealthCheckPath: /
           HealthCheckProtocol: HTTP
-          HealthCheckTimeoutSeconds: 8
+          HealthCheckTimeoutSeconds: 15
           HealthyThresholdCount: 2
           Port: 8080
           Protocol: HTTP
@@ -131,3 +170,10 @@ Resources:
           VpcId: 
             Fn::ImportValue:
               Fn::Sub: "${EnvironmentName}-VPCID"
+
+Outputs:
+    LoadBalancerURL:
+        Description: URL for LoadBalancer DNS 
+        Value: !Join ["URL for Udagram is ",["http://", !GetAtt WebAppLB.DNSName]]
+        Export:
+            Name: !Sub ${EnvironmentName}-DNS-NAME                    
