@@ -10,15 +10,12 @@ This can be done using the scripts included in the repository with the following
 
 First creation, use create.sh
 e.g. ./create.sh UdacityProject2 network.yml network_params.json
-or 
-aws cloudformation create-stack --stack-name UdacityProject2 --region us-west-2 --template-body file://network.yml --parameters file://network_params.json
 
 Updates can be done with the same inputs
 e.g. ./update.sh UdacityProject2 network.yml network_params.json
-or 
-aws cloudformation update-stack --stack-name UdacityProject2 --region us-west-2 --template-body file://network.yml --parameters file://network_params.json
 
 To delete the stack, run the delete script:
 ./delete.sh UdacityProject2
-or
-aws cloudformation delete-stack --stack-name UdacityProject2 --region us-west-2
+
+To use the CLI rather than scripts, the instructions are available in CloudFormation CLI Info.txt
+
