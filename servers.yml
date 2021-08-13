@@ -102,7 +102,7 @@ Resources:
                     systemctl start apache2.service
                     cd /var/www/html
                     echo "Udagram Web Server is Up and Running!" > index.html      
-            ImageId: ami-00ddb0e5626798373  #Ubuntu AMI ID in us-west-2 region
+            ImageId: ami-0ac73f33a1888c64a  #Ubuntu AMI ID in us-west-2 region
             IamInstanceProfile: 
             SecurityGroups:
             - Ref: WebServerSecGroup
