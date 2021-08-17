@@ -111,7 +111,7 @@ Resources:
                     cd /var/www/html
                     aws s3 cp s3://udacity-demo-1/udacity.zip .
                     unzip -o udacity.zip
-                    echo "Udagram Web Server is Up and Running!" > index.html      
+                    echo "Udagram Web Server is Up and Running!  It works! Udagram, Udacity" > index.html      
             ImageId: ami-0ac73f33a1888c64a  #Ubuntu AMI ID in us-west-2 region
             IamInstanceProfile: !Ref IAMRolesForInstanceProfile
             SecurityGroups:
