@@ -1,0 +1,28 @@
+CloudFormation CLI info
+
+create stack:
+
+aws cloudformation create-stack  --stack-name UPNetwork --region us-west-2 --template-body file://network.yml --parameters file://network_params.json
+
+aws cloudformation create-stack  --stack-name UPServers --region us-west-2 --template-body file://servers.yml --parameters file://servers_params.json --capabilities CAPABILITY_IAM --no-verify-ssl
+
+update stack:
+
+aws cloudformation update-stack  --stack-name UPNetwork --region us-west-2 --template-body file://servers.yml --parameters file://servers_params.json --capabilities CAPABILITY_IAM
+
+aws cloudformation update-stack  --stack-name UPServers --region us-west-2 --template-body file://servers.yml --parameters file://servers_params.json --capabilities CAPABILITY_IAM
+
+
+Describe stack:
+aws cloudformation describe-stacks --stack-name UPNetwork --region us-west-2
+aws cloudformation describe-stacks --stack-name UPServers --region us-west-2
+
+Delete stack:
+
+aws cloudformation delete-stack --stack-name UPNetwork --region us-west-2
+aws cloudformation delete-stack --stack-name UPServers --region us-west-2 --no-verify-ssl
+
+
+If you do not connect with an ssl certificate, add --no-verify-ssl to the end of the command line.
+
+
