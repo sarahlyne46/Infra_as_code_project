@@ -4,7 +4,7 @@ create stack:
 
 aws cloudformation create-stack  --stack-name UPNetwork --region us-west-2 --template-body file://network.yml --parameters file://network_params.json
 
-aws cloudformation create-stack  --stack-name UPServers --region us-west-2 --template-body file://servers.yml --parameters file://servers_params.json --capabilities CAPABILITY_IAM --no-verify-ssl
+aws cloudformation create-stack  --stack-name UPServers --region us-west-2 --template-body file://servers.yml --parameters file://servers_params.json --capabilities CAPABILITY_IAM 
 
 update stack:
 
@@ -20,7 +20,7 @@ aws cloudformation describe-stacks --stack-name UPServers --region us-west-2
 Delete stack:
 
 aws cloudformation delete-stack --stack-name UPNetwork --region us-west-2
-aws cloudformation delete-stack --stack-name UPServers --region us-west-2 --no-verify-ssl
+aws cloudformation delete-stack --stack-name UPServers --region us-west-2 
 
 
 If you do not connect with an ssl certificate, add --no-verify-ssl to the end of the command line.
